@@ -4245,8 +4245,9 @@ function rayVoxel(o,d,maxD){
   const tdx=Math.abs(1/(d.x||1e-9)),tdy=Math.abs(1/(d.y||1e-9)),tdz=Math.abs(1/(d.z||1e-9));
   let tx=d.x>0?(x+1-o.x)*tdx:(o.x-x)*tdx, ty=d.y>0?(y+1-o.y)*tdy:(o.y-y)*tdy, tz=d.z>0?(z+1-o.z)*tdz:(o.z-z)*tdz;
   if(!isFinite(tx))tx=Infinity;if(!isFinite(ty))ty=Infinity;if(!isFinite(tz))tz=Infinity;
-  for(let i=0;i<160;i++){
-    if(i>0&&solidAt(x,y,z))return{x,y,z,nx,ny,nz};
+for(let i=0;i<160;i++){
+/* 藤蔓/灌木/草等植物非固体但可瞄准可破坏：射线改遇"非空气"即停（碰撞仍用 solidAt，不受影响） */
+if(i>0){const t=blockTypeAt(x,y,z);if(t)return{x,y,z,nx,ny,nz};}
     if(tx<ty&&tx<tz){if(tx>maxD)return null;x+=sx;nx=-sx;ny=0;nz=0;tx+=tdx;}
     else if(ty<tz){if(ty>maxD)return null;y+=sy;ny=-sy;nx=0;nz=0;ty+=tdy;}
     else{if(tz>maxD)return null;z+=sz;nz=-sz;nx=0;ny=0;tz+=tdz;}
