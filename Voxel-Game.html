@@ -21,7 +21,6 @@ body{font-family:'Noto Sans SC',sans-serif;color:#e8eef4;user-select:none;-webki
 #statCard{position:absolute;top:14px;left:14px;padding:10px 14px;font-size:12px;line-height:1.9;min-width:210px}
 #statCard .t{font-size:13px;color:var(--amber);letter-spacing:.12em;margin-bottom:2px}
 #statCard b{font-family:ui-monospace,'SF Mono',Consolas,monospace;font-weight:600;color:#fff;float:right}
-#qualChip{position:absolute;top:14px;right:14px;padding:7px 12px;font-size:11px;letter-spacing:.18em;color:var(--cyan)}
 #crosshair{position:absolute;left:50%;top:50%;width:22px;height:22px;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:transform .12s}
 #crosshair::before,#crosshair::after{content:'';position:absolute;background:#fff}
 #crosshair::before{left:50%;top:0;width:2px;height:100%;transform:translateX(-50%)}
@@ -34,8 +33,7 @@ body{font-family:'Noto Sans SC',sans-serif;color:#e8eef4;user-select:none;-webki
 .slot.sel{border-color:var(--amber);box-shadow:0 0 14px rgba(255,180,84,.45),var(--shadow);transform:translateY(-4px)}
 .slot .key{position:absolute;top:2px;left:4px;font-size:10px;color:rgba(255,255,255,.65);font-family:ui-monospace,monospace}
 .slot .sw{width:30px;height:30px;border:2px solid rgba(0,0,0,.4);border-radius:3px;background:linear-gradient(155deg,color-mix(in srgb,var(--c),#fff 30%),var(--c) 48%,color-mix(in srgb,var(--c),#000 32%))}
-#hintCard{position:absolute;bottom:22px;right:14px;padding:10px 14px;font-size:11px;line-height:2;color:#b9c6d4}
-#hintCard kbd,.pcard kbd{display:inline-block;min-width:20px;text-align:center;padding:1px 6px;margin-right:6px;background:#1a2330;border:1px solid #33404f;border-bottom:3px solid #33404f;border-radius:4px;font-family:ui-monospace,monospace;font-size:10px;color:#dfe9f2}
+.pcard kbd{display:inline-block;min-width:20px;text-align:center;padding:1px 6px;margin-right:6px;background:#1a2330;border:1px solid #33404f;border-bottom:3px solid #33404f;border-radius:4px;font-family:ui-monospace,monospace;font-size:10px;color:#dfe9f2}
 #toast{position:absolute;bottom:110px;left:50%;transform:translateX(-50%) translateY(8px);padding:8px 18px;background:rgba(8,12,18,.9);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:4px;font-size:13px;opacity:0;pointer-events:none;white-space:nowrap}
 #toast.show{animation:toastA 1.9s ease forwards}
 @keyframes toastA{0%{opacity:0;transform:translateX(-50%) translateY(10px)}12%{opacity:1;transform:translateX(-50%) translateY(0)}78%{opacity:1}100%{opacity:0}}
@@ -94,7 +92,7 @@ body{font-family:'Noto Sans SC',sans-serif;color:#e8eef4;user-select:none;-webki
 #dragGhost{position:fixed;z-index:60;pointer-events:none;display:none;transform:translate(-50%,-50%)}
 #dragGhost .sw{width:38px;height:38px;opacity:.9}
 .sw{width:30px;height:30px;border:2px solid rgba(0,0,0,.4);border-radius:3px;background:linear-gradient(155deg,color-mix(in srgb,var(--c),#fff 30%),var(--c) 48%,color-mix(in srgb,var(--c),#000 32%))}
-@media(max-width:760px){#hintCard{display:none}}
+@media(max-width:760px){}
 </style>
 </head>
 <body>
@@ -110,18 +108,10 @@ body{font-family:'Noto Sans SC',sans-serif;color:#e8eef4;user-select:none;-webki
     <div>生物 <b id="sMob">--</b></div>
     <div>区块 <b id="sChk">--</b></div>
   </div>
-  <div id="qualChip" class="card disp">21亿主题维度 · 群系 · 浮空岛 · 快速GI</div>
+  
   <div id="crosshair"></div>
   <div id="selName" class="disp"></div>
   <div id="hotbar"></div>
-  <div id="hintCard" class="card">
-    <kbd>WASD</kbd>移动 <kbd>双击空格</kbd>飞行<br>
-    <kbd>左键</kbd>破坏 <kbd>右键</kbd>放置<br>
-    <kbd>F5</kbd>视角 <kbd>F3+B</kbd>碰撞箱 <kbd>F3+V</kbd>寻路<br>
-<kbd>E</kbd>背包 · <kbd>Enter</kbd>控制台 · <kbd>wei n</kbd>跳转维度<br>
-    <kbd>wei nb~nb7</kbd> 固定维度 · <kbd>wei cre [种子]</kbd> 原创维度<br>
-    <kbd>wei mix A B [比例]</kbd> 杂交维度
-  </div>
   <div id="toast"></div>
 </div>
 <div id="underwater"></div>
@@ -193,7 +183,7 @@ window.addEventListener('error',e=>{
 });
 
 /* ================= 常量 ================= */
-const CS=16, RADIUS=8;
+const CS=16, RADIUS=12;
 const WORLD_MIN=-384, WORLD_MAX=384;
 const SEA=13, SNOW_LINE=150, TREE_MAX=120;
 const VS=256;
@@ -3329,11 +3319,18 @@ function faceTint(t,f,x,y,z,h,sl){
   if(DIM.biomes){
     const b=biomeAt(x,z);
     const F=BIO_FOL[b];
-    if(F){
+if(F){
 if(t===T.GRASS&&f===3){r*=F.g[0];g*=F.g[1];bl*=F.g[2];}
 else if(isLeafType(t)){r*=F.l[0];g*=F.l[1];bl*=F.l[2];}
 else if(t===T.GRASSX){r*=F.g[0];g*=F.g[1];bl*=F.g[2];}
-    }
+}
+/* 四季更替：仅温带/高白桦木森林群系随季节变色（春=原色 / 夏=浓绿 / 秋=金黄 / 冬=雪白） */
+if(b===B_TEMP||b===B_BIRCH){
+if((t===T.GRASS&&f===3)||t===T.GRASSX||isLeafType(t)){
+const ST=SEASON_TINT[seasonIdx];
+r*=ST[0];g*=ST[1];bl*=ST[2];
+}
+}
     if(t===T.SHRUB){r*=.88;g*=.75;bl*=.40;}
     if(t===T.VINE){r*=.8;g*=.9;bl*=.6;}
   }
@@ -4329,9 +4326,8 @@ skyMat.uniforms.uPlanetCol.value.set(DIM.planetCol[0],DIM.planetCol[1],DIM.plane
 skyMat.uniforms.uPlanetAxis.value.set(DIM.planetAxis[0],DIM.planetAxis[1],DIM.planetAxis[2]).normalize();
 skyMat.uniforms.uPlanetRing.value=DIM.planetRing;
 }
-  hCache.clear();bCache.clear();mCache.clear();fiCache.clear();bioCache.clear();houseCache.clear();
-  moCache.clear();deCache.clear();ownCache.clear();vCache.clear();
-  mods.clear();modCols.clear();dirtyQ.clear();
+hCache.clear();bCache.clear();mCache.clear();fiCache.clear();bioCache.clear();houseCache.clear();moCache.clear();deCache.clear();ownCache.clear();vCache.clear();mods.clear();modCols.clear();dirtyQ.clear();
+purgeFireflies();
   for(const st of chunks.values()){
     if(st.mesh){scene.remove(st.mesh);st.mesh.geometry.dispose();}
     if(st.waterMesh){scene.remove(st.waterMesh);st.waterMesh.geometry.dispose();}
@@ -4523,6 +4519,169 @@ const mv=bobAmp*Math.min(1,Math.hypot(player.vel.x,player.vel.z)/3);
   pmArmL.rotation.x=-sw*.8;pmArmR.rotation.x=sw*.8;
 }
 
+/* ================= 四季系统（温带 / 高白桦木森林专属） =================
+初始春季，每 30 分钟自动轮换；ji 1~4 手动切换。
+实现零新材质：只改顶点色乘数（SEASON_TINT），切季时把已加载区块排入
+重建队列（近处 5x5 立即重建秒出效果，远处几秒内波纹式刷新完毕）。 */
+const SEASON_SEC=30*60;
+let seasonIdx=0,seasonT=0;
+const SEASON_NAME=['春季','夏季','秋季','冬季'];
+const SEASON_TINT=[
+[1,1,1],          /* 春：原色新绿 */
+[.85,1.05,.80],   /* 夏：更深沉的浓绿 */
+[2.6,1.0,.40],    /* 秋：压蓝提红 → 金黄 */
+[3.0,2.0,8.0]     /* 冬：三通道提到雪白（略带冷蓝） */
+];
+function applySeason(silent){
+const pcx=Math.floor(player.pos.x/CS),pcz=Math.floor(player.pos.z/CS);
+for(const st of chunks.values())if(st.mesh||st.waterMesh||st.vegMesh)dirtyQ.add(ckey(st.cx,st.cz));
+for(let dx=-2;dx<=2;dx++)for(let dz=-2;dz<=2;dz++){   /* 近处立即重建：切季秒见效 */
+const k=ckey(pcx+dx,pcz+dz),s=chunks.get(k);
+if(s&&(s.mesh||s.waterMesh||st0(s))){try{buildChunk(s.cx,s.cz);}catch(e){console.error(e);}}
+dirtyQ.delete(k);
+function st0(q){return q.vegMesh;}
+}
+if(seasonIdx!==2)purgeLeaves();
+if(!silent)toast('季节更替 · '+SEASON_NAME[seasonIdx]);
+}
+/* ===== 秋季落叶粒子：仅温带/高白桦树冠下生成，金黄小片旋转飘落 ===== */
+const LF_MAX=140;
+const leafFall=new THREE.InstancedMesh(
+new THREE.PlaneGeometry(.26,.26),
+new THREE.MeshBasicMaterial({color:0xcf9a2e,side:THREE.DoubleSide,transparent:true,opacity:.92}),
+LF_MAX);
+leafFall.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+leafFall.frustumCulled=false;leafFall.count=0;scene.add(leafFall);
+const lfP=[];for(let i=0;i<LF_MAX;i++)lfP.push({on:false,x:0,y:0,z:0,vy:0,ph:0,sp:0,rot:0,gr:0});
+const lfD=new THREE.Object3D();
+let lfHead=0,lfActive=0,lfTick=0;
+function purgeLeaves(){
+for(let i=0;i<LF_MAX;i++){const p=lfP[i];if(!p.on)continue;p.on=false;
+lfD.position.set(0,-9999,0);lfD.scale.setScalar(0);lfD.updateMatrix();leafFall.setMatrixAt(i,lfD.matrix);}
+lfActive=0;lfHead=0;leafFall.count=0;leafFall.instanceMatrix.needsUpdate=true;
+}
+function spawnLeaf(){
+const a=Math.random()*Math.PI*2,d=4+Math.random()*22;
+const bx=Math.floor(player.pos.x+Math.sin(a)*d),bz=Math.floor(player.pos.z+Math.cos(a)*d);
+const b=biomeAt(bx,bz);
+if(b!==B_TEMP&&b!==B_BIRCH)return;
+const h=heightAt(bx,bz);
+let ly=-1;
+for(let y=h+2;y<=h+46;y++)if(isLeafType(blockTypeAt(bx,y,bz)))ly=y;   /* 找树冠顶 */
+if(ly<0)return;
+const i=lfHead;lfHead=(lfHead+1)%LF_MAX;
+const p=lfP[i];if(!p.on)lfActive++;
+p.on=true;p.x=bx+.5+(Math.random()-.5)*.8;p.y=ly-.2;p.z=bz+.5+(Math.random()-.5)*.8;
+p.vy=.9+Math.random()*.7;p.ph=Math.random()*6.28;p.sp=1.5+Math.random()*2;
+p.rot=Math.random()*6.28;p.gr=h+1.1;
+}
+function updateLeaves(dt){
+if(seasonIdx!==2||!DIM.biomes){if(lfActive)purgeLeaves();return;}
+lfTick-=dt;
+if(lfTick<=0&&lfActive<LF_MAX){lfTick=.07;spawnLeaf();}
+if(lfActive===0){if(leafFall.count!==0)leafFall.count=0;return;}
+let maxI=-1;
+for(let i=0;i<LF_MAX;i++){
+const p=lfP[i];if(!p.on)continue;
+p.y-=p.vy*dt;
+p.ph+=p.sp*dt;
+p.x+=Math.sin(p.ph)*.55*dt;
+p.z+=Math.cos(p.ph*.8)*.45*dt;
+p.rot+=dt*2.2;
+if(p.y<=p.gr){p.on=false;lfActive--;
+lfD.position.set(0,-9999,0);lfD.scale.setScalar(0);lfD.updateMatrix();
+leafFall.setMatrixAt(i,lfD.matrix);continue;}
+lfD.position.set(p.x-origin.x,p.y,p.z-origin.z);
+lfD.rotation.set(p.rot*.6,p.rot,p.rot*.3);
+lfD.scale.setScalar(1);
+lfD.updateMatrix();leafFall.setMatrixAt(i,lfD.matrix);
+if(i>maxI)maxI=i;
+}
+leafFall.instanceMatrix.needsUpdate=true;
+leafFall.count=maxI+1;
+}
+
+
+
+
+/* ================= 萤火虫粒子（夜晚专属） =================
+适用范围：主世界 / 原创维度 / 21亿主题维度（mode==='rand' || 'cre'）
+行为：夜晚在玩家周围草地/树冠附近生成，缓慢漂浮，黄绿光闪烁，黎明消散 */
+const FF_MAX=150;
+const ffGeo=new THREE.SphereGeometry(.12,4,3);
+const ffMat=new THREE.MeshBasicMaterial({
+color:0xccff55,transparent:true,opacity:.9,
+blending:THREE.AdditiveBlending,depthWrite:false,fog:true
+});
+const fireflies=new THREE.InstancedMesh(ffGeo,ffMat,FF_MAX);
+fireflies.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+fireflies.instanceColor=new THREE.InstancedBufferAttribute(new Float32Array(FF_MAX*3),3);
+fireflies.frustumCulled=false;fireflies.count=0;scene.add(fireflies);
+const ffParts=[];
+for(let i=0;i<FF_MAX;i++)ffParts.push({on:false,x:0,y:0,z:0,vx:0,vy:0,vz:0,ph:0,sp:0,life:0,maxLife:0});
+const ffDummy=new THREE.Object3D();
+const ffColor=new THREE.Color();
+let ffActive=0,ffHead=0,ffSpawnTimer=0;
+function purgeFireflies(){
+for(let i=0;i<FF_MAX;i++){
+const p=ffParts[i];if(!p.on)continue;p.on=false;
+ffDummy.position.set(0,-9999,0);ffDummy.scale.setScalar(0);ffDummy.updateMatrix();
+fireflies.setMatrixAt(i,ffDummy.matrix);
+}
+ffActive=0;ffHead=0;fireflies.count=0;fireflies.instanceMatrix.needsUpdate=true;
+}
+function spawnFirefly(){
+const a=Math.random()*Math.PI*2,d=5+Math.random()*25;
+const bx=Math.floor(player.pos.x+Math.sin(a)*d),bz=Math.floor(player.pos.z+Math.cos(a)*d);
+const h=heightAt(bx,bz);let sy=-1;
+for(let y=h+1;y<=h+30;y++){
+const t=blockTypeAt(bx,y,bz);
+if(t===T.GRASS||isLeafType(t)||t===T.GRASSX){sy=y+1+Math.random()*2;break;}
+}
+if(sy<0)sy=h+1.5+Math.random()*2;
+const i=ffHead;ffHead=(ffHead+1)%FF_MAX;
+const p=ffParts[i];if(!p.on)ffActive++;
+p.on=true;p.x=bx+.5;p.y=sy;p.z=bz+.5;
+p.vx=(Math.random()-.5)*.6;p.vy=(Math.random()-.5)*.2;p.vz=(Math.random()-.5)*.6;
+p.ph=Math.random()*6.28;p.sp=.8+Math.random()*1.2;p.life=0;p.maxLife=8+Math.random()*12;
+}
+function updateFireflies(dt,nightVis){
+const canSpawn=(DIM.mode==='rand'||DIM.mode==='cre')&&nightVis>0.3;
+if(!canSpawn){if(ffActive>0)purgeFireflies();return;}
+ffSpawnTimer-=dt;
+if(ffSpawnTimer<=0&&ffActive<FF_MAX){ffSpawnTimer=.15;spawnFirefly();}
+if(ffActive===0){if(fireflies.count!==0)fireflies.count=0;return;}
+let maxI=-1;
+for(let i=0;i<FF_MAX;i++){
+const p=ffParts[i];if(!p.on)continue;
+p.life+=dt;
+if(p.life>p.maxLife){
+p.on=false;ffActive--;
+ffDummy.position.set(0,-9999,0);ffDummy.scale.setScalar(0);ffDummy.updateMatrix();
+fireflies.setMatrixAt(i,ffDummy.matrix);continue;
+}
+p.ph+=p.sp*dt;
+p.x+=(p.vx+Math.sin(p.ph)*.4)*dt;
+p.y+=(p.vy+Math.cos(p.ph*.7)*.3)*dt;
+p.z+=(p.vz+Math.sin(p.ph*1.3)*.4)*dt;
+const fade=Math.sin((p.life/p.maxLife)*Math.PI);
+const flicker=.6+.4*Math.sin(p.ph*4.0);
+const s=fade*flicker;
+ffDummy.position.set(p.x-origin.x,p.y,p.z-origin.z);
+ffDummy.scale.setScalar(s);ffDummy.updateMatrix();
+fireflies.setMatrixAt(i,ffDummy.matrix);
+const hueShift=Math.sin(p.ph*.5)*.1;
+ffColor.setHSL(.22+hueShift,.9,.5+.3*flicker);
+fireflies.setColorAt(i,ffColor);
+if(i>maxI)maxI=i;
+}
+fireflies.instanceMatrix.needsUpdate=true;
+fireflies.instanceColor.needsUpdate=true;
+fireflies.count=maxI+1;
+}
+
+
+
 /* ================= 控制台 ================= */
 const consoleOv=document.getElementById('consoleOv'),cInput=document.getElementById('cInput'),cLog=document.getElementById('cLog');
 let cInit=false;
@@ -4561,6 +4720,7 @@ function execCmd(raw){
     cLogPrint('wei mix <A> <B> […] [比例] — 杂交维度，支持套娃：wei mix (mix nb nb2) (mix nb3 nb4)','help');
     cLogPrint('主世界群系：温带/沙漠/高山雪地/热带草原/高白桦木/雪曼将军树/樱花木 + 浮空岛','help');
     cLogPrint('time <0~1> — 设置时间（0日出 0.25正午 0.5日落 0.75午夜）','help');
+cLogPrint('ji <1~4> — 切换季节（1春 2夏 3秋 4冬）· 仅温带/高白桦群系响应','help');
     cLogPrint('tp <x> <y> <z> — 传送坐标 · speed <n> — 速度 · fly — 飞行','help');
   }else if(c==='wei'){
     const arg=(parts[1]||'').toLowerCase();
@@ -4616,7 +4776,14 @@ runMix(line.slice(4).trim());
     if(!isFinite(v)||v<0){cLogPrint('用法：speed <非负数值>（无上限）','err');return;}
     moveSpeed=v;
     cLogPrint('移动速度已设为 '+v,'ok');toast('速度 → '+v);
-  }else if(c==='fly'){
+}else if(c==='ji'){
+const v=parseInt(parts[1],10);
+if(!isFinite(v)||v<1||v>4){cLogPrint('用法：ji <1~4> — 1=春 2=夏 3=秋 4=冬（每30分钟自动轮换）','help');return;}
+seasonIdx=v-1;seasonT=0;
+applySeason(false);
+cLogPrint('已切换为 '+SEASON_NAME[seasonIdx]+(seasonIdx===2?' · 落叶纷飞':''), 'ok');
+return;
+}else if(c==='fly'){
     flyMode=!flyMode;
     if(flyMode)player.vel.y=0;
     cLogPrint('飞行模式：'+(flyMode?'开启（空格↑ / Shift↓）':'关闭'),'ok');
@@ -4898,7 +5065,11 @@ const hit=pickVoxel();
     else{hl.visible=false;if(crossOn){crossOn=false;$cross.classList.remove('on');}}
   }else hl.visible=false;
 
-  updateDebris(dt);
+updateDebris(dt);
+updateLeaves(dt);
+
+seasonT+=dt;
+if(seasonT>=SEASON_SEC){seasonT=0;seasonIdx=(seasonIdx+1)%4;applySeason(false);}
   waterMat.uniforms.uTime.value=now*.001;
 
   worldClock+=dt;
@@ -4910,6 +5081,7 @@ const hit=pickVoxel();
   const nightF=1-smoothstep(-.12,.12,elev);
   const dayF=1-nightF;
   const nightVis=Math.max(nightF,(DIM.stars&&DIM.sunGlow===0)?1:0);
+updateFireflies(dt,nightVis);   /* 必须在 nightVis 初始化之后调用（const 暂时性死区） */
 const bhOn=DIM.mode==='moon'||blackHoleActive;
 skyMat.uniforms.uBH.value=(DIM.mode==='moon')?1:0;
 if(bhOn){
